@@ -1,0 +1,143 @@
+/* Custom CSS for a Premium Sidebar */
+
+.nk-sidebar {
+    background: linear-gradient(145deg, #1e1e2d 0%, #27293d 100%) !important;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 999;
+}
+
+/* Force inner containers to be transparent so the dark background shows */
+.nk-sidebar .nk-nav-scroll {
+    background: transparent !important;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 80px; /* give some space at the bottom */
+}
+
+.nk-sidebar .metismenu {
+    background: transparent !important;
+}
+
+.nk-sidebar .metismenu > li {
+    margin-bottom: 5px;
+}
+
+.nk-sidebar .metismenu > li > a {
+    color: #a2a5b9 !important;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-radius: 10px;
+    margin: 5px 15px;
+    padding: 12px 20px !important;
+    display: flex;
+    align-items: center;
+}
+
+.nk-sidebar .metismenu > li > a i {
+    color: #a2a5b9 !important;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    margin-right: 15px;
+}
+
+.nk-sidebar .metismenu > li:hover > a, 
+.nk-sidebar .metismenu > li.active > a {
+    background: linear-gradient(to right, #23a6d5, #e73c7e) !important;
+    color: #ffffff !important;
+    box-shadow: 0 5px 15px rgba(231, 60, 126, 0.3) !important;
+    transform: translateX(4px);
+    backdrop-filter: none;
+}
+
+.nk-sidebar .metismenu > li:hover > a i, 
+.nk-sidebar .metismenu > li.active > a i {
+    color: #ffffff !important;
+    transform: scale(1.1);
+}
+
+/* Remove default background from submenus */
+.nk-sidebar .metismenu ul {
+    background: transparent !important;
+    padding-left: 0 !important;
+    margin: 5px 0 10px 0;
+}
+
+.nk-sidebar .metismenu ul li a {
+    color: #8f92a3 !important;
+    font-size: 0.95rem;
+    padding: 10px 20px 10px 50px !important;
+    border-radius: 8px;
+    margin: 2px 15px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Subtle dot indicator for submenu items */
+.nk-sidebar .metismenu ul li a::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #8f92a3;
+    transition: all 0.3s ease;
+}
+
+.nk-sidebar .metismenu ul li:hover a,
+.nk-sidebar .metismenu ul li.active a {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    padding-left: 55px !important;
+}
+
+.nk-sidebar .metismenu ul li:hover a::before,
+.nk-sidebar .metismenu ul li.active a::before {
+    background-color: #e73c7e;
+    box-shadow: 0 0 8px #e73c7e;
+}
+
+/* Custom sleek scrollbar for sidebar */
+.nk-nav-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+.nk-nav-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+.nk-nav-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Fix arrows */
+.has-arrow::after {
+    color: inherit !important;
+    transition: transform 0.3s ease;
+}
+
+/* --- Fix for Mini Sidebar Hover Tooltip --- */
+#main-wrapper.menu-toggle .nk-sidebar .nav-text {
+    display: none !important; /* Hide the text completely */
+}
+
+/* Prevent the gradient box from stretching out when hovering in mini mode */
+#main-wrapper.menu-toggle .nk-sidebar .metismenu > li:hover > a {
+    width: max-content !important; 
+    border-radius: 50% !important; /* Make it circular around the icon if we want to keep gradient, or just transparent */
+    padding: 15px !important;
+    margin: 5px auto !important;
+}
+
+#main-wrapper.menu-toggle .nk-sidebar .metismenu > li > a {
+    padding: 15px !important;
+    margin: 5px auto !important;
+    justify-content: center;
+}
+
+#main-wrapper.menu-toggle .nk-sidebar .metismenu > li > a i {
+    margin-right: 0 !important;
+}

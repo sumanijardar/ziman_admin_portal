@@ -1,0 +1,97 @@
+/* Custom CSS for Authentication Pages to provide a rich, premium aesthetic */
+
+.auth-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    transition: transform 0.3s ease;
+}
+
+.auth-card:hover {
+    transform: translateY(-5px);
+}
+
+.auth-title {
+    font-weight: 800;
+    font-size: 2rem;
+    background: -webkit-linear-gradient(#e73c7e, #23a6d5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.auth-input {
+    border-radius: 12px !important;
+    padding: 12px 20px !important;
+    height: auto !important;
+    border: 2px solid #e1e5eb !important;
+    background-color: #f8f9fa !important;
+    transition: all 0.3s ease !important;
+    font-size: 1rem !important;
+}
+
+.auth-input:focus {
+    border-color: #23a6d5 !important;
+    box-shadow: 0 0 0 0.2rem rgba(35, 166, 213, 0.25) !important;
+    background-color: #fff !important;
+}
+
+.auth-btn {
+    border-radius: 12px !important;
+    padding: 12px 20px !important;
+    background: linear-gradient(to right, #23a6d5, #e73c7e) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(231, 60, 126, 0.4) !important;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(231, 60, 126, 0.5) !important;
+}
+
+.auth-link {
+    color: #e73c7e;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    color: #23a6d5;
+    text-decoration: none;
+}
+
+.auth-footer-text {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-top: 2rem;
+}
