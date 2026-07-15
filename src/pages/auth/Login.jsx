@@ -79,9 +79,11 @@ const Login = () => {
     return (
         <div className="auth-container">
             <div className="auth-card">
-                <Link to="" style={{ textDecoration: 'none' }}>
-                    <h4 className="auth-title">Ziman Admin</h4>
-                </Link>
+                <div className="text-center">
+                    <Link to="" style={{ textDecoration: 'none' }}>
+                        <img src="/images/ziman.jpeg" alt="Ziman Admin" style={{ maxWidth: '150px' }} className="mb-4" />
+                    </Link>
+                </div>
 
                 <form className="mt-4" onSubmit={handleLogin}>
 

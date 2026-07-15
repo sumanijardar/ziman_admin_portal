@@ -72,7 +72,7 @@ const Header = () => {
                         <li className="icons dropdown">
                             <div className="user-img c-pointer position-relative d-flex align-items-center" data-toggle="dropdown" style={{ gap: '10px' }}>
                                 <span className="activity active"></span>
-                                <img src="/images/user/1.png" height="40" width="40" alt="" />
+
                                 <span className="d-none d-lg-inline-block text-dark font-weight-bold" style={{ fontSize: '14px' }}>
                                     {userName}
                                 </span>

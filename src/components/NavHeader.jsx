@@ -2,14 +2,14 @@ import React from 'react';
 
 const NavHeader = () => {
     return (
-        <div className="nav-header">
-            <div className="brand-logo">
-                <a href="/">
-                    <b className="logo-abbr"><img src="/images/logo.png" alt="" /> </b>
-                    <span className="logo-compact"><img src="/images/logo-compact.png" alt="" /></span>
-                    <span className="brand-title">
-                        {/* <img src="/images/logo-text.png" alt="" /> */}
-                        <h2 className='text-white text-center'>Ziman Admin</h2>
+        <div className="nav-header" style={{ backgroundColor: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div className="brand-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+                <a href="/" className="d-flex align-items-center justify-content-center" style={{ width: '100%', height: '100%', textDecoration: 'none' }}>
+                    <b className="logo-abbr" style={{ display: 'none' }}>
+                        <img src="/images/ziman.jpeg" alt="" style={{ width: '40px', height: '40px', objectFit: 'cover', objectPosition: 'left', borderRadius: '4px' }} />
+                    </b>
+                    <span className="brand-title" style={{ display: 'flex', alignItems: 'center', padding: '0 10px' }}>
+                        <img src="/images/ziman.jpeg" alt="Ziman Admin" style={{ width: '100%', maxWidth: '200px', maxHeight: '55px', objectFit: 'contain', borderRadius: '5px' }} />
                     </span>
                 </a>
             </div>

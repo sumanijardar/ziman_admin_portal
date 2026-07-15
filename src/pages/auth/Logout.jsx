@@ -15,7 +15,7 @@ const Logout = () => {
         <div className="auth-container">
             <div className="auth-card text-center pb-5">
                 <Link to="/" style={{ textDecoration: 'none' }}> 
-                    <h4 className="auth-title">Ziman Admin</h4>
+                    <img src="/images/ziman.jpeg" alt="Ziman Admin" style={{ maxWidth: '150px' }} className="mb-4" />
                 </Link>
                 
                 <div className="mt-4 mb-4">
