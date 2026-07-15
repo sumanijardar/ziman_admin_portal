@@ -126,6 +126,12 @@ const Sidebar = () => {
 
 
 
+                    <li className={activeMenu === 'officelocation' ? 'active' : ''}>
+                        <Link to="/office-location" aria-expanded="false">
+                            <i className="icon-home menu-icon"></i><span className="nav-text">Office Location</span>
+                        </Link>
+                    </li>
+
 
                     {/* <li className={currentPath === '/settings' ? 'active' : ''}>
                         <Link to="#!" aria-expanded="false">

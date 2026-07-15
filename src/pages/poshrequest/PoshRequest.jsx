@@ -101,7 +101,7 @@ const PoshRequest = () => {
     const columns = [
         {
             name: '#',
-            selector: (row, index) => index + 1,
+            selector: (row) => filteredEvidences.indexOf(row) + 1,
             sortable: false,
             width: '60px',
         },

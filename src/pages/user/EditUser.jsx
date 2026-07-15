@@ -116,7 +116,28 @@ const EditUser = () => {
       <div className="container-fluid">
         <div className="zf-container">
           <div className="zf-card">
-            <h2 className="zf-title">Edit User Details</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2 className="zf-title" style={{ margin: 0 }}>Edit User Details</h2>
+                            <button 
+                                type="button"
+                                onClick={() => navigate(-1)} 
+                                style={{
+                                    padding: '8px 16px',
+                                    borderRadius: '25px',
+                                    border: 'none',
+                                    backgroundColor: '#7f8c8d',
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                <i className="fa fa-arrow-left"></i> Back
+                            </button>
+                        </div>
             <form onSubmit={handleSubmit} className="zf-form-grid">
 
               <div className="zf-section-title">Personal Details</div>

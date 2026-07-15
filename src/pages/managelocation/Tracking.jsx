@@ -133,7 +133,7 @@ const Tracking = () => {
   const columns = [
     {
       name: '#',
-      selector: (row, index) => index + 1,
+      selector: (row) => filteredItems.indexOf(row) + 1,
       sortable: false,
       width: '60px',
     },

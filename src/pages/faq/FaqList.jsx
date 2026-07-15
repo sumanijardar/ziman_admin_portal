@@ -129,7 +129,7 @@ const FaqList = () => {
   const columns = [
     {
       name: '#',
-      selector: (row, index) => index + 1,
+      selector: (row) => filteredFaqs.indexOf(row) + 1,
       sortable: false,
       width: '80px',
     },
