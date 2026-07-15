@@ -205,13 +205,6 @@ const UserList = () => {
       ),
     },
     {
-      name: 'Licence',
-      selector: row => row.licence,
-      sortable: true,
-      minWidth: '100px',
-      cell: row => <div>{row.licence || '-'}</div>,
-    },
-    {
       name: 'Actions',
       cell: row => (
         <div style={{ display: 'flex', gap: '8px' }}>
@@ -282,17 +275,16 @@ const UserList = () => {
     // Check various potential tenant keys since API response format might vary
     const matchesTenant = tenantFilter === '' ||
       (user.tenant && String(user.tenant).toLowerCase() === tenantFilter.toLowerCase()) ||
-      (user.tenant_name && String(user.tenant_name).toLowerCase() === tenantFilter.toLowerCase()) ||
-      (user.tenant_licence_id && String(user.tenant_licence_id) === tenantFilter);
+      (user.tenant_name && String(user.tenant_name).toLowerCase() === tenantFilter.toLowerCase());
 
     return matchesSearch && matchesStatus && matchesTenant;
   });
 
   // Export to CSV Function
   const exportToCSV = () => {
-    const headers = ['UID', 'Name', 'Email', 'Mobile', 'Gender', 'DOB', 'Status', 'Licence'];
+    const headers = ['UID', 'Name', 'Email', 'Mobile', 'Gender', 'DOB', 'Status'];
     const csvRows = filteredUsers.map(u =>
-      `${u.uid},"${u.first_name || ''}","${u.email || ''}","${u.mobile_no || ''}","${u.gender || ''}","${u.date_of_birth || ''}","${u.status || ''}","${u.licence || ''}"`
+      `${u.uid},"${u.first_name || ''}","${u.email || ''}","${u.mobile_no || ''}","${u.gender || ''}","${u.date_of_birth || ''}","${u.status || ''}""`
     );
     const csvString = [headers.join(','), ...csvRows].join('\n');
     const blob = new Blob([csvString], { type: 'text/csv' });

@@ -68,6 +68,7 @@ const PanicEvidence = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [mapModalData, setMapModalData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,7 +80,7 @@ const PanicEvidence = () => {
 
         while (hasMore) {
           const response = await api.get(`user/getUserEvidence/1/${page}`);
-          
+
           if (Array.isArray(response.data) && response.data.length > 0) {
             const formattedData = response.data.map(item => ({
               id: item.id,
@@ -90,12 +91,12 @@ const PanicEvidence = () => {
               latitude: item.user_lat || '-',
               longitude: item.user_long || '-',
               datetime: item.timestamp,
-              panicType: item.panic_type_value || 'Panic',
-              tenant: item.tenant_name || 'N/A'
+              panicType: item.panic_type_value || 'Panic'
+
             }));
-            
+
             allData = [...allData, ...formattedData];
-            
+
             // If we receive less than 10 items, it's the last page
             if (response.data.length < 10) {
               hasMore = false;
@@ -107,7 +108,7 @@ const PanicEvidence = () => {
             hasMore = false;
           }
         }
-        
+
         setEvidences(allData);
       } catch (error) {
         console.error("Error fetching panic evidence:", error);
@@ -118,6 +119,48 @@ const PanicEvidence = () => {
 
     fetchEvidences();
   }, []);
+
+  // Polling effect: only poll if on page 1
+  useEffect(() => {
+    let intervalId;
+    if (currentPage === 1) {
+      intervalId = setInterval(async () => {
+        try {
+          const response = await api.get('user/getUserEvidence/1/1');
+          if (Array.isArray(response.data) && response.data.length > 0) {
+            const formattedData = response.data.map(item => ({
+              id: item.id,
+              alertId: item.id,
+              name: item.first_name || 'N/A',
+              email: item.email || 'N/A',
+              mobile: item.mobile_no || 'N/A',
+              latitude: item.user_lat || '-',
+              longitude: item.user_long || '-',
+              datetime: item.timestamp,
+              panicType: item.panic_type_value || 'Panic',
+
+            }));
+
+            // Check for new records and prepend them
+            setEvidences(prev => {
+              const existingIds = new Set(prev.map(e => e.id));
+              const newItems = formattedData.filter(item => !existingIds.has(item.id));
+              if (newItems.length > 0) {
+                return [...newItems, ...prev];
+              }
+              return prev;
+            });
+          }
+        } catch (error) {
+          console.error("Polling error for panic evidence:", error);
+        }
+      }, 50000); // 50 seconds
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [currentPage]);
 
   // DataTable Columns Configuration
   const columns = [
@@ -188,20 +231,13 @@ const PanicEvidence = () => {
         </span>
       ),
     },
-    {
-      name: 'Tenant',
-      selector: row => row.tenant,
-      sortable: true,
-      minWidth: '120px',
-    },
+
     {
       name: 'Panic Evidences',
       cell: row => {
         const actionButtons = [
           { id: 'inspect', icon: 'fa fa-search-plus', bg: '#3498db', hoverBg: '#2980b9', title: 'Inspect Details' },
-          { id: 'location', icon: 'fa fa-map', bg: '#e74c3c', hoverBg: '#c0392b', title: 'Track Location' },
-          // { id: 'reports', icon: 'fa fa-file-archive-o', bg: '#2ecc71', hoverBg: '#27ae60', title: 'Attached Reports' },
-          // { id: 'download', icon: 'fa fa-cloud-download', bg: '#9b59b6', hoverBg: '#8e44ad', title: 'Save Offline' }
+          { id: 'location', icon: 'fa fa-map', bg: '#e74c3c', hoverBg: '#c0392b', title: 'Track Location' }
         ];
 
         return (
@@ -309,6 +345,7 @@ const PanicEvidence = () => {
               pagination
               paginationPerPage={10}
               paginationRowsPerPageOptions={[10, 20, 30]}
+              onChangePage={(page) => setCurrentPage(page)}
               highlightOnHover
               pointerOnHover
               responsive

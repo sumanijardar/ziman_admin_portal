@@ -27,6 +27,7 @@ import FaqEdit from './pages/faq/FaqEdit';
 import OfficeList from './pages/officelocation/OfficeList';
 import Addofficelocation from './pages/officelocation/Addofficelocation';
 import Editofficelocation from './pages/officelocation/Editofficelocation';
+import QrCodeList from './pages/qrcode/QrCodeList';
 
 function App() {
   return (
@@ -55,11 +56,14 @@ function App() {
         <Route path="/faq" element={<Layout showFooter={false}><FaqList /></Layout>} />
         <Route path="/faq/add" element={<Layout showFooter={false}><FaqAdd /></Layout>} />
         <Route path="/faq/edit/:id" element={<Layout showFooter={false}><FaqEdit /></Layout>} />
-        
+
         {/* Office Location Routes */}
         <Route path="/office-location" element={<Layout showFooter={false}><OfficeList /></Layout>} />
         <Route path="/add-office-location" element={<Layout showFooter={false}><Addofficelocation /></Layout>} />
         <Route path="/office-location/edit/:id" element={<Layout showFooter={false}><Editofficelocation /></Layout>} />
+
+        {/* QR Code Routes */}
+        <Route path="/qrcode-list" element={<Layout showFooter={false}><QrCodeList /></Layout>} />
 
       </Routes>
     </BrowserRouter>

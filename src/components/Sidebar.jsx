@@ -133,6 +133,27 @@ const Sidebar = () => {
                     </li>
 
 
+                    <li className={activeMenu === 'qrcode' ? 'active' : ''}>
+                        <a
+                            className="has-arrow"
+                            href="#!"
+                            aria-expanded={activeMenu === 'qrcode' ? 'true' : 'false'}
+                            onClick={(e) => { e.preventDefault(); toggleMenu('qrcode'); }}
+                        >
+                            <i className="fa fa-qrcode menu-icon"></i><span className="nav-text">QR Code</span>
+                        </a>
+                        <ul
+                            aria-expanded={activeMenu === 'qrcode' ? 'true' : 'false'}
+                            className={activeMenu === 'qrcode' ? 'collapse in' : 'collapse'}
+                            style={{ display: activeMenu === 'qrcode' ? 'block' : 'none' }}
+                        >
+                            <li className={currentPath === '/qrcode-list' ? 'active' : ''}><Link to="/qrcode-list">QR List</Link></li>
+
+                        </ul>
+                    </li>
+
+
+
                     {/* <li className={currentPath === '/settings' ? 'active' : ''}>
                         <Link to="#!" aria-expanded="false">
                             <i className="icon-settings menu-icon"></i><span className="nav-text">Settings</span>

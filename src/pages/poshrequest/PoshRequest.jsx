@@ -67,6 +67,7 @@ const PoshRequest = () => {
     const [evidences, setEvidences] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -82,7 +83,6 @@ const PoshRequest = () => {
                         mobile: item.mobile_no || 'N/A',
                         latitude: item.user_lat || '-',
                         longitude: item.user_long || '-',
-                        tenant: item.tenant_name || 'N/A',
                         datetime: item.timestamp,
                     }));
                     setEvidences(formattedData);
@@ -96,6 +96,46 @@ const PoshRequest = () => {
 
         fetchEvidences();
     }, []);
+
+    // Polling effect: only poll if on page 1
+    useEffect(() => {
+        let intervalId;
+        if (currentPage === 1) {
+            intervalId = setInterval(async () => {
+                try {
+                    const response = await api.get('user/getUserPoshEvidence/1');
+                    if (Array.isArray(response.data)) {
+                        const formattedData = response.data.map(item => ({
+                            id: item.id,
+                            alertId: item.id,
+                            name: item.first_name ? item.first_name.trim() : 'N/A',
+                            email: item.email || 'N/A',
+                            mobile: item.mobile_no || 'N/A',
+                            latitude: item.user_lat || '-',
+                            longitude: item.user_long || '-',
+                            datetime: item.timestamp,
+                        }));
+
+                        // Check for new records and prepend them
+                        setEvidences(prev => {
+                            const existingIds = new Set(prev.map(e => e.id));
+                            const newItems = formattedData.filter(item => !existingIds.has(item.id));
+                            if (newItems.length > 0) {
+                                return [...newItems, ...prev];
+                            }
+                            return prev;
+                        });
+                    }
+                } catch (error) {
+                    console.error("Polling error for posh evidence:", error);
+                }
+            }, 50000); // 50 seconds
+        }
+
+        return () => {
+            if (intervalId) clearInterval(intervalId);
+        };
+    }, [currentPage]);
 
     // DataTable Columns Configuration
     const columns = [
@@ -141,12 +181,6 @@ const PoshRequest = () => {
             selector: row => row.longitude,
             sortable: true,
             minWidth: '130px',
-        },
-        {
-            name: 'Tenant',
-            selector: row => row.tenant,
-            sortable: true,
-            minWidth: '120px',
         },
         {
             name: 'Date/Time',
@@ -202,8 +236,8 @@ const PoshRequest = () => {
         const searchLower = searchTerm.toLowerCase();
         return (
             ev.name.toLowerCase().includes(searchLower) ||
-            ev.alertId.includes(searchTerm) ||
-            ev.tenant.toLowerCase().includes(searchLower)
+            ev.alertId.includes(searchTerm)
+
         );
     });
 
@@ -248,6 +282,7 @@ const PoshRequest = () => {
                             pagination
                             paginationPerPage={10}
                             paginationRowsPerPageOptions={[10, 20, 30]}
+                            onChangePage={(page) => setCurrentPage(page)}
                             highlightOnHover
                             pointerOnHover
                             responsive
