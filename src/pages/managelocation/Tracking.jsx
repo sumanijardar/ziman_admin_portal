@@ -97,7 +97,6 @@ const Tracking = () => {
               endTime: item.end_time || '-',
               shareTime: item.share_time ? `${item.share_time} mins` : '-',
               status: item.status || 'N/A',
-              tenant: item.tenant_name || 'N/A',
               lat,
               lng
             };
@@ -177,13 +176,6 @@ const Tracking = () => {
       selector: row => row.status,
       sortable: true,
       minWidth: '120px',
-      wrap: true,
-    },
-    {
-      name: 'Tenant',
-      selector: row => row.tenant,
-      sortable: true,
-      minWidth: '130px',
       wrap: true,
     },
     {

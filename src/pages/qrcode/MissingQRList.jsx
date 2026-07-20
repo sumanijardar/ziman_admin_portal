@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
 import api from '../../services/api';
 
-// Premium Custom Styles for the DataTable (Matched with Template)
 const customStyles = {
     header: {
         style: {
@@ -56,7 +54,7 @@ const customStyles = {
     },
 };
 
-const QrCodeList = () => {
+const MissingQRList = () => {
     const [qrCodes, setQrCodes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [keyword, setKeyword] = useState('');
@@ -78,11 +76,11 @@ const QrCodeList = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await api.get(`/qrcode/getQrCode`);
+            const response = await api.get(`/qrcode/getMissingStatusQrCode`);
             let data = Array.isArray(response.data) ? response.data : (response.data?.data || []);
             setQrCodes(data);
         } catch (err) {
-            console.error("Failed to fetch QR Codes:", err);
+            console.error("Failed to fetch Missing QR Codes:", err);
             setQrCodes([]);
         } finally {
             setLoading(false);
@@ -102,37 +100,6 @@ const QrCodeList = () => {
         setCurrentPage(page);
     };
 
-    const handleToggleStatus = (id, newStatus) => {
-        Swal.fire({
-            title: 'Change Missing Status?',
-            text: "Are you sure you want to change the missing status of this QR code?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3498db',
-            cancelButtonColor: '#7f8c8d',
-            confirmButtonText: 'Yes, change it!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const formData = new URLSearchParams();
-                    formData.append('id', id);
-                    formData.append('missing_status', newStatus);
-
-                    const response = await api.post('/qrcode/changeMissingStatus', formData);
-                    if (response.data === true || response.data?.status === true || response.data?.success) {
-                        Swal.fire('Updated!', 'QR Code missing status has been updated.', 'success');
-                        fetchData();
-                    } else {
-                        Swal.fire('Error', 'Failed to update missing status.', 'error');
-                    }
-                } catch (error) {
-                    console.error("Error updating status:", error);
-                    Swal.fire('Error', 'An error occurred while updating status.', 'error');
-                }
-            }
-        });
-    };
-
     const columns = [
         {
             name: '#',
@@ -140,20 +107,20 @@ const QrCodeList = () => {
             sortable: false,
             width: '80px',
         },
-        // {
-        //     name: 'User Full Name',
-        //     selector: row => row.first_name,
-        //     sortable: true,
-        //     minWidth: '200px',
-        //     cell: row => {
-        //         const fullName = [row.first_name, row.last_name].filter(Boolean).join(' ');
-        //         return (
-        //             <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>
-        //                 {fullName || '-'}
-        //             </div>
-        //         );
-        //     },
-        // },
+        {
+            name: 'User Name',
+            selector: row => row.first_name,
+            sortable: true,
+            minWidth: '200px',
+            cell: row => {
+                const fullName = [row.first_name, row.last_name].filter(Boolean).join(' ');
+                return (
+                    <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>
+                        {fullName || '-'}
+                    </div>
+                );
+            },
+        },
         {
             name: 'Code',
             selector: row => row.code,
@@ -173,84 +140,60 @@ const QrCodeList = () => {
             sortable: true,
             minWidth: '180px',
         },
-        {
-            name: 'Action',
-            cell: row => (
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    {/* Status Toggle Icon */}
-                    <button
-                        onClick={() => handleToggleStatus(row.id, row.missing_status === '2' ? '0' : '1')}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontSize: '24px',
-                            color: row.missing_status === '2' ? '#e74c3c' : '#2ecc71',
-                            padding: '0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'color 0.3s'
-                        }}
-                        title={row.missing_status === '2' ? 'Missing (Click to mark safe)' : 'Normal (Click to report missing)'}
-                    >
-                        <i className={row.missing_status === '2' ? "fa fa-toggle-on" : "fa fa-toggle-off"}></i>
-                    </button>
-
-                    {/* Details Button */}
-                    {/* <button
-                        onClick={() => navigate(`/qrcode-detail/${row.id}`)}
-                        style={{
-                            padding: '6px 12px',
-                            border: 'none',
-                            borderRadius: '6px',
-                            backgroundColor: '#1abc9c',
-                            color: 'white',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '32px',
-                            height: '32px',
-                            transition: 'background 0.3s'
-                        }}
-                        title="Details"
-                        onMouseOver={(e) => e.target.style.backgroundColor = '#16a085'}
-                        onMouseOut={(e) => e.target.style.backgroundColor = '#1abc9c'}
-                    >
-                        <i className="fa fa-eye"></i>
-                    </button> */}
-
-
-                </div>
-            ),
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
-            width: '180px',
-        },
+        // {
+        //     name: 'Action',
+        //     cell: row => (
+        //         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        //             {/* Details Button */}
+        //             <button
+        //                 onClick={() => navigate(`/missing-qr-detail/${row.id}`)}
+        //                 style={{
+        //                     padding: '6px 12px',
+        //                     border: 'none',
+        //                     borderRadius: '6px',
+        //                     backgroundColor: '#1abc9c',
+        //                     color: 'white',
+        //                     cursor: 'pointer',
+        //                     fontWeight: 'bold',
+        //                     display: 'flex',
+        //                     alignItems: 'center',
+        //                     justifyContent: 'center',
+        //                     width: '32px',
+        //                     height: '32px',
+        //                     transition: 'background 0.3s'
+        //                 }}
+        //                 title="Details"
+        //                 onMouseOver={(e) => e.target.style.backgroundColor = '#16a085'}
+        //                 onMouseOut={(e) => e.target.style.backgroundColor = '#1abc9c'}
+        //             >
+        //                 <i className="fa fa-eye"></i>
+        //             </button>
+        //         </div>
+        //     ),
+        //     ignoreRowClick: true,
+        //     allowOverflow: true,
+        //     button: true,
+        //     width: '120px',
+        // },
     ];
 
     return (
         <div className="content-body" style={{ backgroundColor: '#f4f6f9', minHeight: '100vh', padding: '30px', paddingTop: '100px' }}>
             <div className="container-fluid">
-
                 {/* Top bar with Title */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h2 style={{ fontWeight: 'bold', color: '#2c3e50', margin: 0 }}>QR Code List</h2>
+                    <h2 style={{ fontWeight: 'bold', color: '#2c3e50', margin: 0 }}>Missing QR List</h2>
                 </div>
 
                 {/* Filters and Actions Card */}
                 <div className="card mb-4" style={{ borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', border: 'none' }}>
                     <div className="card-body">
                         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center w-100" style={{ gap: '15px' }}>
-
                             {/* Search Box */}
                             <div style={{ width: '100%', maxWidth: '350px' }}>
                                 <input
                                     type="text"
-                                    placeholder="Search..."
+                                    placeholder="Search by serial number, code, name..."
                                     value={keyword}
                                     onChange={e => setKeyword(e.target.value)}
                                     style={{
@@ -265,33 +208,6 @@ const QrCodeList = () => {
                                     onFocus={(e) => e.target.style.border = '1px solid #3498db'}
                                     onBlur={(e) => e.target.style.border = '1px solid #ced4da'}
                                 />
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div className="d-flex" style={{ gap: '10px', flexWrap: 'wrap' }}>
-
-                                <button
-                                    onClick={() => navigate('/add-qrcode')}
-                                    style={{
-                                        padding: '10px 20px',
-                                        borderRadius: '25px',
-                                        border: 'none',
-                                        backgroundColor: '#27ae60',
-                                        color: 'white',
-                                        fontWeight: 'bold',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                        transition: 'background 0.3s',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px'
-                                    }}
-                                    onMouseOver={(e) => e.target.style.backgroundColor = '#2ecc71'}
-                                    onMouseOut={(e) => e.target.style.backgroundColor = '#27ae60'}
-                                >
-                                    <i className="fa fa-plus"></i> Add New QR Code
-                                </button>
-
                             </div>
                         </div>
                     </div>
@@ -312,16 +228,14 @@ const QrCodeList = () => {
                             paginationRowsPerPageOptions={[10, 25, 50, 100]}
                             highlightOnHover
                             pointerOnHover
-                            persistTableHead
                             responsive
-                            noDataComponent={<div style={{ padding: '24px', fontSize: '16px', color: '#7f8c8d' }}>No QR Codes found.</div>}
+                            noDataComponent={<div style={{ padding: '24px', fontSize: '16px', color: '#7f8c8d' }}>No Missing QR Codes found.</div>}
                         />
                     </div>
                 </div>
-
             </div>
         </div>
     );
 };
 
-export default QrCodeList;
+export default MissingQRList;

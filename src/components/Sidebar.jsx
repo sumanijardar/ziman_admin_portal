@@ -148,10 +148,21 @@ const Sidebar = () => {
                             style={{ display: activeMenu === 'qrcode' ? 'block' : 'none' }}
                         >
                             <li className={currentPath === '/qrcode-list' ? 'active' : ''}><Link to="/qrcode-list">QR List</Link></li>
+                            <li className={currentPath === '/missing-qrlist' ? 'active' : ''}><Link to="/missing-qrlist">Missing QR List</Link></li>
+                            <li className={currentPath === '/missing-qr-notification' ? 'active' : ''}><Link to="/missing-qr-notification">Missing QR Notification</Link></li>
+                            <li className={currentPath === '/rise-alerts' ? 'active' : ''}><Link to="/rise-alerts">Rise Alerts</Link></li>
+                            <li className={currentPath === '/scan-alerts' ? 'active' : ''}><Link to="/scan-alerts">Scan Alerts</Link></li>
 
                         </ul>
                     </li>
 
+
+
+                    <li className={activeMenu === 'livelocation' ? 'active' : ''}>
+                        <Link to="/live-location/:id" aria-expanded="false">
+                            <i className="icon-map menu-icon"></i><span className="nav-text">Live Location</span>
+                        </Link>
+                    </li>
 
 
                     {/* <li className={currentPath === '/settings' ? 'active' : ''}>

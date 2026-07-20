@@ -28,6 +28,13 @@ import OfficeList from './pages/officelocation/OfficeList';
 import Addofficelocation from './pages/officelocation/Addofficelocation';
 import Editofficelocation from './pages/officelocation/Editofficelocation';
 import QrCodeList from './pages/qrcode/QrCodeList';
+import AddQrCode from './pages/qrcode/AddQrCode';
+import MissingQRList from './pages/qrcode/MissingQRList';
+import MissingQRListDetails from './pages/qrcode/MissingQRListDetails';
+import MissingQRNotification from './pages/qrcode/MissingQRNotification';
+import RiseAlerts from './pages/qrcode/RiseAlerts';
+import ScanAlerts from './pages/qrcode/ScanAlerts';
+import LiveLocationSharing from './pages/locationsharing/livelocationsharing';
 
 function App() {
   return (
@@ -64,7 +71,15 @@ function App() {
 
         {/* QR Code Routes */}
         <Route path="/qrcode-list" element={<Layout showFooter={false}><QrCodeList /></Layout>} />
-
+        <Route path="/add-qrcode" element={<Layout showFooter={false}><AddQrCode /></Layout>} />
+        <Route path="/missing-qrlist" element={<Layout showFooter={false}><MissingQRList /></Layout>} />
+        <Route path="/missing-qr-detail/:id" element={<Layout showFooter={false}><MissingQRListDetails /></Layout>} />
+        <Route path="/missing-qr-notification" element={<Layout showFooter={false}><MissingQRNotification /></Layout>} />
+        <Route path="/rise-alerts" element={<Layout showFooter={false}><RiseAlerts /></Layout>} />
+        <Route path="/scan-alerts" element={<Layout showFooter={false}><ScanAlerts /></Layout>} />
+        
+        {/* Public Live Location Sharing Route - No Login/Layout required */}
+        <Route path="/live-location/:id" element={<LiveLocationSharing />} />
       </Routes>
     </BrowserRouter>
   );
