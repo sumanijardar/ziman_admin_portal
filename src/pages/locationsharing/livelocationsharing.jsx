@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import axios from 'axios';
+import api from '../../services/api';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import styled from 'styled-components';
@@ -74,29 +74,28 @@ const LiveLocationSharing = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        // NOTE: REPLACE THIS WITH YOUR ACTUAL API ENDPOINT
-        // This is where you would call your API every 2 seconds
-        /*
-        const response = await axios.get(`YOUR_API_URL/location/${id}`);
-        if(response.data && response.data.lat && response.data.lng) {
-            setPosition([response.data.lat, response.data.lng]);
-            setLastUpdated(new Date());
-            setError(null);
-        }
-        */
+        const formData = new FormData();
+        formData.append('loc_user_id', id);
+        const response = await api.post('/api/getShareLiveLocation/', formData);
 
-        // SIMULATION FOR DEMO:
-        // Updating position slightly every 2 seconds to simulate movement
-        setPosition(prev => [
-            prev[0] + (Math.random() - 0.5) * 0.0005, 
-            prev[1] + (Math.random() - 0.5) * 0.0005
-        ]);
-        setLastUpdated(new Date());
-        setError(null);
+        let resData = response.data;
+        if (typeof resData === 'string') {
+          try { resData = JSON.parse(resData); } catch (e) { }
+        }
+
+        if (resData && resData.status === 'Success') {
+          setPosition([Number(resData.lat), Number(resData.lng)]);
+          setUsername(resData.username);
+          setLastUpdated(new Date());
+          setError(null);
+        } else {
+          setError(resData?.message || "User is offline or not sharing location.");
+        }
         setLoading(false);
       } catch (err) {
         console.error("Error fetching location", err);
@@ -118,8 +117,8 @@ const LiveLocationSharing = () => {
 
   return (
     <Container>
-      <Header>Live Location Tracking</Header>
-      
+      <Header>Live Location for User: {username || id}</Header>
+
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
           Loading location...
@@ -129,7 +128,7 @@ const LiveLocationSharing = () => {
           <StatusText $active={!error}>
             {error ? 'Offline' : 'Live'}
           </StatusText>
-          
+
           <MapContainer center={position} zoom={15} style={{ height: '100%', width: '100%', zIndex: 1 }}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -141,7 +140,7 @@ const LiveLocationSharing = () => {
                 Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString() : 'N/A'}
               </Popup>
             </Marker>
-            
+
             <MapUpdater position={position} />
           </MapContainer>
         </div>

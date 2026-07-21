@@ -160,7 +160,13 @@ const Sidebar = () => {
 
                     <li className={activeMenu === 'livelocation' ? 'active' : ''}>
                         <Link to="/live-location/:id" aria-expanded="false">
-                            <i className="icon-map menu-icon"></i><span className="nav-text">Live Location</span>
+                            <i className="fa fa-location-arrow menu-icon"></i><span className="nav-text">Live Location Sharing</span>
+                        </Link>
+                    </li>
+
+                    <li className={activeMenu === 'risequery' ? 'active' : ''}>
+                        <Link to="/rise-query" aria-expanded="false">
+                            <i className="fa fa-question-circle menu-icon"></i><span className="nav-text">Rise Query</span>
                         </Link>
                     </li>
 

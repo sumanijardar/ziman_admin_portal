@@ -35,6 +35,7 @@ import MissingQRNotification from './pages/qrcode/MissingQRNotification';
 import RiseAlerts from './pages/qrcode/RiseAlerts';
 import ScanAlerts from './pages/qrcode/ScanAlerts';
 import LiveLocationSharing from './pages/locationsharing/livelocationsharing';
+import RiseQueryList from './pages/risequery/RiseQueryList';
 
 function App() {
   return (
@@ -77,9 +78,13 @@ function App() {
         <Route path="/missing-qr-notification" element={<Layout showFooter={false}><MissingQRNotification /></Layout>} />
         <Route path="/rise-alerts" element={<Layout showFooter={false}><RiseAlerts /></Layout>} />
         <Route path="/scan-alerts" element={<Layout showFooter={false}><ScanAlerts /></Layout>} />
-        
+
         {/* Public Live Location Sharing Route - No Login/Layout required */}
         <Route path="/live-location/:id" element={<LiveLocationSharing />} />
+
+        {/* Rise Query Routes */}
+        <Route path="/rise-query" element={<Layout showFooter={false}><RiseQueryList /></Layout>} />
+
       </Routes>
     </BrowserRouter>
   );
