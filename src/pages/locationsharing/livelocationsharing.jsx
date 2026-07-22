@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import api from '../../services/api';
 import 'leaflet/dist/leaflet.css';
@@ -70,6 +70,9 @@ const MapUpdater = ({ position }) => {
 
 const LiveLocationSharing = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState('');
+  
   const [position, setPosition] = useState([28.6139, 77.2090]); // Default to New Delhi
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -77,10 +80,16 @@ const LiveLocationSharing = () => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+
     const fetchLocation = async () => {
       try {
         const formData = new FormData();
         formData.append('loc_user_id', id);
+        formData.append('app_security_key','yg@@!@fdgdrttrytryghhgjhguyt');
         const response = await api.post('/api/getShareLiveLocation/', formData);
 
         let resData = response.data;
@@ -114,6 +123,32 @@ const LiveLocationSharing = () => {
 
     return () => clearInterval(interval);
   }, [id]);
+
+  if (!id) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100%', padding: '20px' }}>
+        <h2>Track Live Location</h2>
+        <p>Please enter the User ID to view their live location.</p>
+        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+          <input 
+            type="text" 
+            placeholder="Enter User ID (e.g. 5256)" 
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            style={{ padding: '10px', width: '250px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <button 
+            onClick={() => {
+              if (searchInput) navigate(`/live-location/${searchInput}`);
+            }}
+            style={{ padding: '10px 20px', background: '#2c3e50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+          >
+            Track Location
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Container>

@@ -79,6 +79,9 @@ function App() {
         <Route path="/rise-alerts" element={<Layout showFooter={false}><RiseAlerts /></Layout>} />
         <Route path="/scan-alerts" element={<Layout showFooter={false}><ScanAlerts /></Layout>} />
 
+        {/* Route for Sidebar link - requires Layout */}
+        <Route path="/live-location" element={<Layout showFooter={false}><LiveLocationSharing /></Layout>} />
+
         {/* Public Live Location Sharing Route - No Login/Layout required */}
         <Route path="/live-location/:id" element={<LiveLocationSharing />} />
 

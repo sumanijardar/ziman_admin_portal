@@ -86,11 +86,11 @@ const Sidebar = () => {
                     </li>
 
 
-                    {/* <li className={currentPath === '/travel-safe' ? 'active' : ''}>
+                    <li className={currentPath === '/travel-safe' ? 'active' : ''}>
                         <Link to="/travel-safe" aria-expanded="false">
                             <i className="icon-plane menu-icon"></i><span className="nav-text">Travel Safe</span>
                         </Link>
-                    </li> */}
+                    </li>
 
 
 
@@ -159,7 +159,7 @@ const Sidebar = () => {
 
 
                     <li className={activeMenu === 'livelocation' ? 'active' : ''}>
-                        <Link to="/live-location/:id" aria-expanded="false">
+                        <Link to="/live-location/" aria-expanded="false">
                             <i className="fa fa-location-arrow menu-icon"></i><span className="nav-text">Live Location Sharing</span>
                         </Link>
                     </li>

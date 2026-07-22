@@ -1,13 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import { useParams, useNavigate } from 'react-router-dom';
-
-const initialDetails = [
-  { id: 1, status: 'Safe', latitude: '19.1139514', longitude: '72.8651172', datetime: '2026-05-29 14:17:34' },
-  { id: 2, status: 'No Action', latitude: '19.1139514', longitude: '72.8651172', datetime: '2026-05-29 14:17:27' },
-  { id: 3, status: 'Safe', latitude: '19.113887', longitude: '72.8650365', datetime: '2026-05-29 14:10:01' },
-  { id: 4, status: 'Unsafe', latitude: '19.1140633', longitude: '72.8651414', datetime: '2026-05-29 14:04:35' },
-];
+import api from '../../services/api';
 
 const customStyles = {
   header: {
@@ -71,43 +65,68 @@ const customStyles = {
 const TravelSafeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [details, setDetails] = useState(initialDetails);
+  const [details, setDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState('');
 
+  useEffect(() => {
+    const fetchDetails = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get(`/user/getFollowMeSafeRequest/${id}`);
+        // Assuming the response structure is { data: [...] } or an array directly
+        const data = response.data?.data || response.data || [];
+        // Make sure it's an array for filtering
+        setDetails(Array.isArray(data) ? data : [data]);
+      } catch (error) {
+        console.error("Error fetching details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchDetails();
+    }
+  }, [id]);
+
   const filteredItems = details.filter(
-    item => 
-      (item.status && item.status.toLowerCase().includes(filterText.toLowerCase())) ||
-      (item.datetime && item.datetime.toLowerCase().includes(filterText.toLowerCase()))
+    item => {
+      const status = item.status_title || item.status || '';
+      const datetime = item.created_at || item.datetime || '';
+      return (status && status.toString().toLowerCase().includes(filterText.toLowerCase())) ||
+        (datetime && datetime.toString().toLowerCase().includes(filterText.toLowerCase()));
+    }
   );
 
   const columns = [
     {
       name: '#',
-      selector: (row) => filteredItems.indexOf(row) + 1,
+      selector: (row, index) => index + 1,
       sortable: false,
       width: '60px',
     },
     {
       name: 'Status',
-      selector: row => row.status,
+      selector: row => row.status_title || row.status || 'N/A',
       sortable: true,
       minWidth: '150px',
     },
     {
       name: 'Latitude',
-      selector: row => row.latitude,
+      selector: row => row.user_lat || row.latitude || 'N/A',
       sortable: true,
       minWidth: '150px',
     },
     {
       name: 'Longitude',
-      selector: row => row.longitude,
+      selector: row => row.user_long || row.longitude || 'N/A',
       sortable: true,
       minWidth: '150px',
     },
     {
       name: 'Date/Time',
-      selector: row => row.datetime,
+      selector: row => row.created_at || row.datetime || 'N/A',
       sortable: true,
       minWidth: '200px',
     },
@@ -117,7 +136,7 @@ const TravelSafeDetail = () => {
     <div className="content-body" style={{ backgroundColor: '#f4f6f9', minHeight: '100vh', padding: '30px', paddingTop: '100px' }}>
       <div className="container-fluid">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <button 
+          <button
             className="btn btn-outline-secondary"
             onClick={() => navigate(-1)}
             style={{ borderRadius: '20px', padding: '8px 20px', fontWeight: 'bold' }}
@@ -154,7 +173,9 @@ const TravelSafeDetail = () => {
               columns={columns}
               data={filteredItems}
               customStyles={customStyles}
+              progressPending={loading}
               pagination
+              persistTableHead
               paginationPerPage={10}
               paginationRowsPerPageOptions={[10, 20, 30]}
               highlightOnHover

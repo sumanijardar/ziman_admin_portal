@@ -1,19 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
-
-const initialTravels = [
-  {
-    id: 1,
-    name: 'Nishant-Sharma',
-    mobile: '7738233469',
-    startDateTime: '2026-05-29 12:51:22',
-    stopDateTime: '2026-05-29 14:17:37',
-    vehicleNumber: '-',
-    lastStatus: 'Safe',
-    tenantName: 'admin',
-  }
-];
+import api from '../../services/api';
 
 // Premium Custom Styles for the DataTable
 const customStyles = {
@@ -76,72 +64,108 @@ const customStyles = {
 };
 
 const TravelSafe = () => {
-  const [travels, setTravels] = useState(initialTravels);
+  const [travels, setTravels] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [perPage, setPerPage] = useState(10);
   const navigate = useNavigate();
+
+  const fetchTravels = async (page = 1) => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/user/getPreTriggerNotifications/1/${page}`);
+
+      const data = response.data?.data || response.data || [];
+      
+      // Calculate total rows based on pagination fields in the response (nxt_page_id)
+      let total = data.length;
+      if (data.length > 0) {
+        const currentPage = data[0].curr_page_id || page;
+        const hasNextPage = data[0].nxt_page_id && data[0].nxt_page_id !== 0;
+        
+        if (hasNextPage) {
+          // Force DataTable to show the Next page button
+          total = (currentPage * 10) + 1;
+        } else {
+          // On the last page, total is exact
+          total = ((currentPage - 1) * 10) + data.length;
+        }
+      }
+      
+      setTravels(data);
+      setTotalRows(total);
+    } catch (error) {
+      console.error("Error fetching travels:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTravels(1);
+  }, []);
+
+  const handlePageChange = page => {
+    fetchTravels(page);
+  };
 
   // DataTable Columns Configuration
   const columns = [
     {
       name: '#',
-      selector: (row) => travels.indexOf(row) + 1,
+      selector: (row, index) => row.sr_no || index + 1,
       sortable: false,
       width: '60px',
     },
     {
       name: 'Name',
-      selector: row => row.name,
+      selector: row => row.user_id || row.name || 'N/A',
       sortable: true,
       minWidth: '180px',
       wrap: true,
     },
     {
       name: 'Mobile No',
-      selector: row => row.mobile,
+      selector: row => row.mobile_no || row.mobile || 'N/A',
       sortable: true,
       minWidth: '160px',
       wrap: true,
     },
     {
       name: 'Start Date Time',
-      selector: row => row.startDateTime,
+      selector: row => row.tracking_start_time || row.startDateTime || 'N/A',
       sortable: true,
       minWidth: '220px',
       wrap: true,
     },
     {
       name: 'Stop Date Time',
-      selector: row => row.stopDateTime,
+      selector: row => row.tracking_end_time || row.stopDateTime || 'N/A',
       sortable: true,
       minWidth: '220px',
       wrap: true,
     },
     {
       name: 'Vehicle Number',
-      selector: row => row.vehicleNumber,
+      selector: row => row.vehicle_number || row.vehicleNumber || 'N/A',
       sortable: true,
       minWidth: '200px',
       wrap: true,
     },
     {
       name: 'Last Status',
-      selector: row => row.lastStatus,
+      selector: row => row.last_status || row.lastStatus || 'N/A',
       sortable: true,
       minWidth: '160px',
       wrap: true,
     },
-    {
-      name: 'Tenant name',
-      selector: row => row.tenantName,
-      sortable: true,
-      minWidth: '160px',
-      wrap: true,
-    },
+
     {
       name: 'View',
       cell: row => {
         return (
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', padding: '8px 0' }}>
-            <button 
+            <button
               style={{
                 background: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
                 color: '#2c3e50',
@@ -155,36 +179,15 @@ const TravelSafe = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px'
-              }} 
+              }}
               title="View Details"
               onClick={() => {
-                navigate(`/travel-safe-detail/${row.id}`);
+                navigate(`/travel-safe-detail/${row.tracking_id || row.id || row._id}`);
               }}
             >
               <i className="fa fa-eye"></i> Details
             </button>
-            <button 
-              style={{
-                background: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)',
-                color: '#c0392b',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '6px 14px',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }} 
-              title="View Map"
-              onClick={() => {
-                // Future map implementation
-              }}
-            >
-              <i className="fa fa-map"></i> Track
-            </button>
+
           </div>
         );
       },
@@ -210,11 +213,16 @@ const TravelSafe = () => {
               columns={columns}
               data={travels}
               customStyles={customStyles}
+              progressPending={loading}
               pagination
-              paginationPerPage={10}
-              paginationRowsPerPageOptions={[10, 20, 30]}
+              paginationServer
+              paginationTotalRows={totalRows}
+              onChangePage={handlePageChange}
+              paginationPerPage={perPage}
+              paginationComponentOptions={{ noRowsPerPage: true }}
               highlightOnHover
               pointerOnHover
+              persistTableHead
               responsive
               noDataComponent={<div style={{ padding: '24px', fontSize: '16px', color: '#7f8c8d' }}>No records found.</div>}
             />
