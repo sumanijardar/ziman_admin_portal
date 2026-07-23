@@ -39,7 +39,7 @@ import RiseQueryList from './pages/risequery/RiseQueryList';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/ziman/' >
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
