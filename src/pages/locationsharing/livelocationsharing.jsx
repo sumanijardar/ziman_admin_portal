@@ -15,6 +15,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+
+
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -72,7 +74,7 @@ const LiveLocationSharing = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState('');
-  
+
   const [position, setPosition] = useState([28.6139, 77.2090]); // Default to New Delhi
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -89,7 +91,7 @@ const LiveLocationSharing = () => {
       try {
         const formData = new FormData();
         formData.append('loc_user_id', id);
-        formData.append('app_security_key','yg@@!@fdgdrttrytryghhgjhguyt');
+        formData.append('app_security_key', 'yg@@!@fdgdrttrytryghhgjhguyt');
         const response = await api.post('/api/getShareLiveLocation/', formData);
 
         let resData = response.data;
@@ -130,14 +132,14 @@ const LiveLocationSharing = () => {
         <h2>Track Live Location</h2>
         <p>Please enter the User ID to view their live location.</p>
         <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <input 
-            type="text" 
-            placeholder="Enter User ID (e.g. 5256)" 
+          <input
+            type="text"
+            placeholder="Enter User ID (e.g. 5256)"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             style={{ padding: '10px', width: '250px', borderRadius: '5px', border: '1px solid #ccc' }}
           />
-          <button 
+          <button
             onClick={() => {
               if (searchInput) navigate(`/live-location/${searchInput}`);
             }}
