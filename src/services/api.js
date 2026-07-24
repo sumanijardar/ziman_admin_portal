@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // Pointing to /api so Vite proxy intercepts it and handles CORS
-  baseURL: '/api'
+  // Pointing to /api in dev for Vite proxy, and real URL in production
+  baseURL: import.meta.env.PROD ? 'https://sarsspl.com/ziman/backend/index.php' : '/api'
 });
 
 // Interceptor to add auth token to every request if available

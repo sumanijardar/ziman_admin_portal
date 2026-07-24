@@ -8,7 +8,7 @@ const Signup = () => {
             <div className="auth-card">
                 <div className="text-center">
                     <Link to="/" style={{ textDecoration: 'none' }}> 
-                        <img src="/images/ziman.jpeg" alt="Ziman Admin" style={{ maxWidth: '150px' }} className="mb-4" />
+                        <img src={`${import.meta.env.BASE_URL}images/ziman.jpeg`} alt="Ziman Admin" style={{ maxWidth: '150px' }} className="mb-4" />
                     </Link>
                 </div>
                 

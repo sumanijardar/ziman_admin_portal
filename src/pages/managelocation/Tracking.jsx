@@ -68,6 +68,7 @@ const Tracking = () => {
   const [filterText, setFilterText] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);
+  const [stoppingId, setStoppingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -96,7 +97,7 @@ const Tracking = () => {
               startTime: item.start_time || '-',
               endTime: item.end_time || '-',
               shareTime: item.share_time ? `${item.share_time} mins` : '-',
-              status: item.status || 'N/A',
+              status: String(item.status) === '0' ? 'Close' : (String(item.status) === '1' ? 'Open' : (item.status !== undefined && item.status !== null ? String(item.status) : 'N/A')),
               lat,
               lng
             };
@@ -123,6 +124,35 @@ const Tracking = () => {
     setSelectedTrack(null);
   };
 
+  const handleStopTracking = async (row) => {
+    if (!window.confirm("Are you sure you want to close this tracking?")) return;
+    
+    setStoppingId(row.id);
+    try {
+      // Add a leading slash to ensure correct URL resolution
+      const response = await api.get(`/User/closeTracking/${row.id}`);
+      
+      const data = response.data;
+      // Loosen the strict equality (==) in case '200' comes as a string, and check both uppercase/lowercase 'code'
+      if (data && (data.Code == 200 || data.code == 200)) {
+        setTrackings(prev => prev.map(t => t.id === row.id ? { ...t, status: 'Close' } : t));
+        alert(data.msg || data.message || "Tracking closed successfully!");
+      } else {
+        alert(data?.msg || data?.message || "Failed to close tracking. Response code was not 200.");
+        if (data && (data.Code == 201 || data.code == 201)) {
+          // Already closed
+          setTrackings(prev => prev.map(t => t.id === row.id ? { ...t, status: 'Close' } : t));
+        }
+      }
+    } catch (error) {
+      console.error("Error stopping tracking:", error);
+      const errorMsg = error.response?.data?.msg || error.response?.data?.message || error.message;
+      alert(`API Error: ${errorMsg}`);
+    } finally {
+      setStoppingId(null);
+    }
+  };
+
   const filteredItems = trackings.filter(
     item =>
       (item.trackee && item.trackee.toLowerCase().includes(filterText.toLowerCase())) ||
@@ -143,13 +173,7 @@ const Tracking = () => {
       minWidth: '150px',
       wrap: true,
     },
-    {
-      name: 'Tracker',
-      selector: row => row.tracker,
-      sortable: true,
-      minWidth: '150px',
-      wrap: true,
-    },
+
     {
       name: 'Start Time',
       selector: row => row.startTime,
@@ -174,43 +198,54 @@ const Tracking = () => {
     {
       name: 'Status',
       selector: row => row.status,
-      sortable: true,
-      minWidth: '120px',
-      wrap: true,
-    },
-    {
-      name: 'View Map',
       cell: row => {
-        return (
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', padding: '8px 0' }}>
-            <button
+        let overOneHour = false;
+        
+        if (row.startTime && row.startTime !== '-') {
+           const start = new Date(row.startTime).getTime();
+           // Compare with end_time if exists, else compare with current time
+           const endStr = (row.endTime && row.endTime !== '-') ? row.endTime : new Date().toISOString();
+           const end = new Date(endStr).getTime();
+           
+           if (!isNaN(start) && !isNaN(end)) {
+             const diffHours = (end - start) / (1000 * 60 * 60);
+             if (diffHours > 1) {
+               overOneHour = true;
+             }
+           }
+        }
+        
+        const isOpen = String(row.status).toLowerCase() === 'open' || String(row.status) === '1';
+        
+        if (isOpen && overOneHour) {
+          return (
+            <button 
               style={{
                 background: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)',
                 color: '#c0392b',
                 border: 'none',
-                borderRadius: '12px',
+                borderRadius: '8px',
                 padding: '6px 14px',
                 fontSize: '12px',
-                fontWeight: '600',
+                fontWeight: 'bold',
                 cursor: 'pointer',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
               }}
-              title="View Map"
-              onClick={() => handleViewMap(row)}
+              onClick={() => handleStopTracking(row)}
+              disabled={stoppingId === row.id}
             >
-              <i className="fa fa-map"></i> View
+              {stoppingId === row.id ? 'Stopping...' : 'Stop'}
             </button>
-          </div>
-        );
+          );
+        }
+
+        return <span style={{ fontWeight: '500' }}>{row.status}</span>;
       },
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
+      sortable: true,
       minWidth: '130px',
+      wrap: true,
     },
+
   ];
 
   return (

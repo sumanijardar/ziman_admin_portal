@@ -51,7 +51,7 @@ const AddUser = () => {
     formdata.append("gender", formData.gender);
     formdata.append("blood_group", formData.bloodGroup);
     formdata.append("age", formData.age);
-    
+
     // Format dob from YYYY-MM-DD to DD-MM-YYYY to match API example format
     let formattedDob = formData.dob;
     if (formattedDob && formattedDob.includes('-')) {
@@ -74,7 +74,7 @@ const AddUser = () => {
     try {
       const response = await api.post("/admin/addUser", formdata);
       const result = response.data;
-      
+
       console.log("API Result:", result);
 
       if (result.status === "success" || result.code === 200) {
@@ -112,27 +112,27 @@ const AddUser = () => {
         <div className="zf-container">
           <div className="zf-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <h2 className="zf-title" style={{ margin: 0 }}>Add New User</h2>
-                            <button 
-                                type="button"
-                                onClick={() => navigate(-1)} 
-                                style={{
-                                    padding: '8px 16px',
-                                    borderRadius: '25px',
-                                    border: 'none',
-                                    backgroundColor: '#7f8c8d',
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px'
-                                }}
-                            >
-                                <i className="fa fa-arrow-left"></i> Back
-                            </button>
-                        </div>
+              <h2 className="zf-title" style={{ margin: 0 }}>Add New User</h2>
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '25px',
+                  border: 'none',
+                  backgroundColor: '#7f8c8d',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <i className="fa fa-arrow-left"></i> Back
+              </button>
+            </div>
             <form onSubmit={handleSubmit} className="zf-form-grid">
 
               <div className="zf-section-title">Personal Details</div>
@@ -159,7 +159,7 @@ const AddUser = () => {
 
               <div className="zf-input-group">
                 <label className="zf-label">Date of Birth</label>
-                <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="zf-input" required />
+                <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
@@ -169,11 +169,11 @@ const AddUser = () => {
 
               <div className="zf-input-group">
                 <label className="zf-label">Gender</label>
-                <select name="gender" value={formData.gender} onChange={handleChange} className="zf-select" required>
+                <select name="gender" value={formData.gender} onChange={handleChange} className="zf-select" >
                   <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                  <option value="1">Male</option>
+                  <option value="2">Female</option>
+                  <option value="3">Other</option>
                 </select>
               </div>
 
@@ -181,14 +181,14 @@ const AddUser = () => {
                 <label className="zf-label">Blood Group</label>
                 <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} className="zf-select">
                   <option value="">Select Blood Group</option>
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
+                  <option value="1">A+</option>
+                  <option value="2">B+</option>
+                  <option value="3">O+</option>
+                  <option value="4">AB+</option>
+                  <option value="5">A-</option>
+                  <option value="6">B-</option>
+                  <option value="7">O-</option>
+                  <option value="8">AB-</option>
                 </select>
               </div>
 
@@ -206,14 +206,14 @@ const AddUser = () => {
 
               <div className="zf-input-group zf-full-width">
                 <label className="zf-label">Address</label>
-                <textarea name="address" value={formData.address} onChange={handleChange} className="zf-textarea" required></textarea>
+                <textarea name="address" value={formData.address} onChange={handleChange} className="zf-textarea" ></textarea>
               </div>
 
               <div className="zf-section-title">Emergency Contacts</div>
 
               <div className="zf-input-group">
                 <label className="zf-label">Emergency Number 1</label>
-                <input type="tel" name="emergentNo1" value={formData.emergentNo1} onChange={handleChange} className="zf-input" required />
+                <input type="tel" name="emergentNo1" value={formData.emergentNo1} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
@@ -231,7 +231,7 @@ const AddUser = () => {
                 <input type="tel" name="emergentNo4" value={formData.emergentNo4} onChange={handleChange} className="zf-input" />
               </div>
 
-              <div className="zf-section-title">Plan Details</div>
+              {/* <div className="zf-section-title">Plan Details</div>
 
               <div className="zf-input-group">
                 <label className="zf-label">Start Date</label>
@@ -241,7 +241,7 @@ const AddUser = () => {
               <div className="zf-input-group">
                 <label className="zf-label">Day</label>
                 <input type="text" name="day" value={formData.day} onChange={handleChange} className="zf-input" placeholder="e.g. Monday" />
-              </div>
+              </div> */}
 
               {/* <div className="zf-input-group">
                 <label className="zf-label">Select Plan</label>
@@ -253,7 +253,7 @@ const AddUser = () => {
                 </select>
               </div> */}
 
-              <div className="zf-input-group">
+              {/* <div className="zf-input-group">
                 <label className="zf-label">Status</label>
                 <select name="status" value={formData.status} onChange={handleChange} className="zf-select" required>
                   <option value="">Select Status</option>
@@ -261,7 +261,7 @@ const AddUser = () => {
                   <option value="Inactive">Inactive</option>
                   <option value="Pending">Pending</option>
                 </select>
-              </div>
+              </div> */}
 
               <button type="submit" className="zf-submit-btn">
                 Submit Details

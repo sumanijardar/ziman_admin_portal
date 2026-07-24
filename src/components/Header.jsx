@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const userName = localStorage.getItem('user_name') || 'Admin';
@@ -24,7 +25,7 @@ const Header = () => {
                                     <ul>
                                         <li className="notification-unread">
                                             <a href="#!">
-                                                <img className="float-left mr-3 avatar-img" src="/images/avatar/1.jpg" alt="" />
+                                                <img className="float-left mr-3 avatar-img" src={`${import.meta.env.BASE_URL}images/avatar/1.jpg`} alt="" />
                                                 <div className="notification-content">
                                                     <div className="notification-heading">Saiful Islam</div>
                                                     <div className="notification-timestamp">08 Hours ago</div>
@@ -34,7 +35,7 @@ const Header = () => {
                                         </li>
                                         <li className="notification-unread">
                                             <a href="#!">
-                                                <img className="float-left mr-3 avatar-img" src="/images/avatar/2.jpg" alt="" />
+                                                <img className="float-left mr-3 avatar-img" src={`${import.meta.env.BASE_URL}images/avatar/2.jpg`} alt="" />
                                                 <div className="notification-content">
                                                     <div className="notification-heading">Adam Smith</div>
                                                     <div className="notification-timestamp">08 Hours ago</div>
@@ -44,7 +45,7 @@ const Header = () => {
                                         </li>
                                         <li>
                                             <a href="#!">
-                                                <img className="float-left mr-3 avatar-img" src="/images/avatar/3.jpg" alt="" />
+                                                <img className="float-left mr-3 avatar-img" src={`${import.meta.env.BASE_URL}images/avatar/3.jpg`} alt="" />
                                                 <div className="notification-content">
                                                     <div className="notification-heading">Barak Obama</div>
                                                     <div className="notification-timestamp">08 Hours ago</div>
@@ -54,7 +55,7 @@ const Header = () => {
                                         </li>
                                         <li>
                                             <a href="#!">
-                                                <img className="float-left mr-3 avatar-img" src="/images/avatar/4.jpg" alt="" />
+                                                <img className="float-left mr-3 avatar-img" src={`${import.meta.env.BASE_URL}images/avatar/4.jpg`} alt="" />
                                                 <div className="notification-content">
                                                     <div className="notification-heading">Hilari Clinton</div>
                                                     <div className="notification-timestamp">08 Hours ago</div>
@@ -85,7 +86,7 @@ const Header = () => {
                                     </div>
                                     <ul>
 
-                                        <li><a href="/logout"><i className="icon-key"></i> <span>Logout</span></a></li>
+                                        <li><Link to="/logout"><i className="icon-key"></i> <span>Logout</span></Link></li>
                                     </ul>
                                 </div>
                             </div>

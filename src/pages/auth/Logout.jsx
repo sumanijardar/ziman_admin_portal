@@ -15,7 +15,7 @@ const Logout = () => {
         <div className="auth-container">
             <div className="auth-card text-center pb-5">
                 <Link to="/" style={{ textDecoration: 'none' }}> 
-                    <img src="/images/ziman.jpeg" alt="Ziman Admin" style={{ maxWidth: '150px' }} className="mb-4" />
+                    <img src={`${import.meta.env.BASE_URL}images/ziman.jpeg`} alt="Ziman Admin" style={{ maxWidth: '150px' }} className="mb-4" />
                 </Link>
                 
                 <div className="mt-4 mb-4">

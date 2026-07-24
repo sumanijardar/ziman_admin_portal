@@ -155,6 +155,27 @@ const UserList = () => {
       cell: row => <div style={{ fontWeight: 'bold', color: '#2c3e50' }}>{row.first_name || '-'}</div>,
     },
     {
+      name: 'SAP Code',
+      selector: row => row.sap_code,
+      sortable: true,
+      minWidth: '120px',
+      cell: row => <div>{row.sap_code || '-'}</div>,
+    },
+    {
+      name: 'Designation',
+      selector: row => row.designation,
+      sortable: true,
+      minWidth: '140px',
+      cell: row => <div>{row.designation || '-'}</div>,
+    },
+    {
+      name: 'Branch Code',
+      selector: row => row.branch_code,
+      sortable: true,
+      minWidth: '180px',
+      cell: row => <div>{row.branch_code || '-'}</div>,
+    },
+    {
       name: 'Email',
       selector: row => row.email,
       sortable: true,
@@ -176,13 +197,7 @@ const UserList = () => {
       minWidth: '120px',
       cell: row => <div>{row.gender || '-'}</div>,
     },
-    {
-      name: 'DOB',
-      selector: row => row.date_of_birth,
-      sortable: true,
-      minWidth: '120px',
-      cell: row => <div>{row.date_of_birth || '-'}</div>,
-    },
+
     {
       name: 'Status',
       selector: row => row.status,
@@ -349,7 +364,7 @@ const UserList = () => {
                   <option value="Pending">Pending</option>
                 </select>
 
-                <select
+                {/* <select
                   value={tenantFilter}
                   onChange={(e) => setTenantFilter(e.target.value)}
                   style={{
@@ -369,7 +384,7 @@ const UserList = () => {
                       {tenant.first_name}
                     </option>
                   ))}
-                </select>
+                </select> */}
 
                 <button
                   onClick={fetchData}

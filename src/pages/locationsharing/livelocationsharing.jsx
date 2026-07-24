@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, LayersControl } from 'react-leaflet';
 import api from '../../services/api';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -73,19 +73,23 @@ const MapUpdater = ({ position }) => {
 const LiveLocationSharing = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState('');
 
   const [position, setPosition] = useState([28.6139, 77.2090]); // Default to New Delhi
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [username, setUsername] = useState('');
+  const [locationName, setLocationName] = useState('Fetching location...');
+  const lastFetchedCoords = useRef({ lat: null, lng: null });
 
   useEffect(() => {
     if (!id) {
       setLoading(false);
       return;
     }
+
+    let interval;
+    let isMounted = true;
 
     const fetchLocation = async () => {
       try {
@@ -99,18 +103,47 @@ const LiveLocationSharing = () => {
           try { resData = JSON.parse(resData); } catch (e) { }
         }
 
+        if (!isMounted) return;
+
         if (resData && resData.status === 'Success') {
-          setPosition([Number(resData.lat), Number(resData.lng)]);
+          const newLat = Number(resData.lat);
+          const newLng = Number(resData.lng);
+          setPosition([newLat, newLng]);
           setUsername(resData.username);
           setLastUpdated(new Date());
           setError(null);
+
+          // Fetch location name if it moved significantly
+          const latDiff = Math.abs(newLat - (lastFetchedCoords.current.lat || 0));
+          const lngDiff = Math.abs(newLng - (lastFetchedCoords.current.lng || 0));
+
+          if (latDiff > 0.0001 || lngDiff > 0.0001) {
+            lastFetchedCoords.current = { lat: newLat, lng: newLng };
+            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${newLat},${newLng}&key=AIzaSyCE1wdfavAG6p3Yztj_f2vH_TGE3n1yJ5I`)
+              .then(res => res.json())
+              .then(data => {
+                if (data && data.results && data.results.length > 0) {
+                  setLocationName(data.results[0].formatted_address);
+                } else {
+                  setLocationName("Location name not found");
+                }
+              })
+              .catch(err => {
+                console.error("Reverse geocoding error:", err);
+                setLocationName("Unable to fetch location name");
+              });
+          }
+        } else if (resData && resData.status === 'Fail') {
+          setError(resData.msg || "Live location sharing has expired or been stopped by the user.");
+          if (interval) clearInterval(interval); // Stop polling if location is stopped
         } else {
-          setError(resData?.message || "User is offline or not sharing location.");
+          setError("Could not fetch location data.");
         }
         setLoading(false);
       } catch (err) {
         console.error("Error fetching location", err);
-        setError("Could not fetch location data.");
+        if (!isMounted) return;
+        setError("Could not connect to the server.");
         setLoading(false);
       }
     };
@@ -119,36 +152,23 @@ const LiveLocationSharing = () => {
     fetchLocation();
 
     // Call API every 2 seconds
-    const interval = setInterval(() => {
-      fetchLocation();
-    }, 2000);
+    interval = setInterval(fetchLocation, 2000);
 
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      if (interval) clearInterval(interval);
+    };
   }, [id]);
 
   if (!id) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100%', padding: '20px' }}>
-        <h2>Track Live Location</h2>
-        <p>Please enter the User ID to view their live location.</p>
-        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <input
-            type="text"
-            placeholder="Enter User ID (e.g. 5256)"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            style={{ padding: '10px', width: '250px', borderRadius: '5px', border: '1px solid #ccc' }}
-          />
-          <button
-            onClick={() => {
-              if (searchInput) navigate(`/live-location/${searchInput}`);
-            }}
-            style={{ padding: '10px 20px', background: '#2c3e50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-          >
-            Track Location
-          </button>
+      <Container>
+        <Header>Live Location Sharing</Header>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column' }}>
+          <h2>Invalid Tracking Link</h2>
+          <p>User ID is missing from the URL.</p>
         </div>
-      </div>
+      </Container>
     );
   }
 
@@ -160,21 +180,40 @@ const LiveLocationSharing = () => {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
           Loading location...
         </div>
+      ) : error ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, backgroundColor: '#f0f2f5' }}>
+          <div style={{ padding: '40px', background: 'white', borderRadius: '15px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', textAlign: 'center', maxWidth: '450px', margin: '20px' }}>
+            <div style={{ fontSize: '50px', marginBottom: '15px' }}>📍🚫</div>
+            <h3 style={{ color: '#e74c3c', marginBottom: '15px', marginTop: 0, fontSize: '1.5rem' }}>Location Unavailable</h3>
+            <p style={{ color: '#555', fontSize: '1.1rem', lineHeight: '1.5', margin: 0 }}>{error}</p>
+          </div>
+        </div>
       ) : (
         <div style={{ position: 'relative', flex: 1 }}>
-          <StatusText $active={!error}>
-            {error ? 'Offline' : 'Live'}
+          <StatusText $active={true}>
+            Live
           </StatusText>
 
-          <MapContainer center={position} zoom={15} style={{ height: '100%', width: '100%', zIndex: 1 }}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+          <MapContainer center={position} zoom={15} style={{ height: '100%', width: '100%', zIndex: 1 }} attributionControl={false}>
+            <LayersControl position="bottomleft">
+              <LayersControl.BaseLayer checked name="Street Map (GPS)">
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+              </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer name="Satellite">
+                <TileLayer
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                />
+              </LayersControl.BaseLayer>
+            </LayersControl>
+
             <Marker position={position}>
               <Popup>
-                User ID: {id || 'Unknown'} <br />
-                Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString() : 'N/A'}
+                <div style={{ maxWidth: '250px' }}>
+                  <strong>Location:</strong><br />
+                  {locationName}
+                </div>
               </Popup>
             </Marker>
 

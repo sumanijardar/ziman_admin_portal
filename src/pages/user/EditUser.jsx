@@ -30,9 +30,51 @@ const EditUser = () => {
   });
 
   useEffect(() => {
-    // Fetch user details by ID from API here
     if (id) {
-      // e.g. api.get(`/user/getUserInfo/${id}`).then(...)
+      const fetchUserData = async () => {
+        try {
+          // Fetch basic user info
+          const response = await api.get(`user/getUpdateUserInfo/${id}`);
+          // Support multiple potential response structures
+          const userData = response.data?.data?.[0] || response.data?.[0] || response.data?.data || response.data;
+
+          if (userData) {
+            // Check if dob needs reverse formatting if it comes as DD-MM-YYYY
+            let dobValue = userData.date_of_birth || userData.dob || '';
+            if (dobValue && dobValue.includes('-')) {
+              const parts = dobValue.split('-');
+              if (parts[2] && parts[2].length === 4) {
+                // Convert DD-MM-YYYY to YYYY-MM-DD for <input type="date">
+                dobValue = `${parts[2]}-${parts[1]}-${parts[0]}`;
+              }
+            }
+
+            setFormData(prev => ({
+              ...prev,
+              sapcode: userData.sap_code || userData.sapcode || '',
+              firstName: userData.first_name || '',
+              middleName: userData.middle_name || '',
+              lastName: userData.last_name || '',
+              email: userData.email || '',
+              mobile: userData.mobile_no || userData.mobile || '',
+              gender: userData.gender || '',
+              bloodGroup: userData.blood_group || '',
+              dob: dobValue,
+              age: userData.age || '',
+              status: userData.status || '',
+              address: userData.address || '',
+              emergentNo1: userData.emergency_contact_1 || '',
+              emergentNo2: userData.emergency_contact_2 || '',
+              emergentNo3: userData.emergency_contact_3 || '',
+              emergentNo4: userData.emergency_contact_4 || '',
+            }));
+          }
+        } catch (error) {
+          console.error("Failed to fetch user data:", error);
+        }
+      };
+
+      fetchUserData();
     }
   }, [id]);
 
@@ -117,39 +159,39 @@ const EditUser = () => {
         <div className="zf-container">
           <div className="zf-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <h2 className="zf-title" style={{ margin: 0 }}>Edit User Details</h2>
-                            <button 
-                                type="button"
-                                onClick={() => navigate(-1)} 
-                                style={{
-                                    padding: '8px 16px',
-                                    borderRadius: '25px',
-                                    border: 'none',
-                                    backgroundColor: '#7f8c8d',
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px'
-                                }}
-                            >
-                                <i className="fa fa-arrow-left"></i> Back
-                            </button>
-                        </div>
+              <h2 className="zf-title" style={{ margin: 0 }}>Edit User Details</h2>
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '25px',
+                  border: 'none',
+                  backgroundColor: '#7f8c8d',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <i className="fa fa-arrow-left"></i> Back
+              </button>
+            </div>
             <form onSubmit={handleSubmit} className="zf-form-grid">
 
               <div className="zf-section-title">Personal Details</div>
 
               <div className="zf-input-group">
                 <label className="zf-label">SAP Code</label>
-                <input type="text" name="sapcode" value={formData.sapcode} onChange={handleChange} className="zf-input" required />
+                <input type="text" name="sapcode" value={formData.sapcode} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
                 <label className="zf-label">First Name</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="zf-input" required />
+                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
@@ -159,12 +201,12 @@ const EditUser = () => {
 
               <div className="zf-input-group">
                 <label className="zf-label">Last Name</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="zf-input" required />
+                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
                 <label className="zf-label">Date of Birth</label>
-                <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="zf-input" required />
+                <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
@@ -174,11 +216,11 @@ const EditUser = () => {
 
               <div className="zf-input-group">
                 <label className="zf-label">Gender</label>
-                <select name="gender" value={formData.gender} onChange={handleChange} className="zf-select" required>
+                <select name="gender" value={formData.gender} onChange={handleChange} className="zf-select" >
                   <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
+                  <option value="1">Male</option>
+                  <option value="2">Female</option>
+                  <option value="3">Other</option>
                 </select>
               </div>
 
@@ -186,14 +228,14 @@ const EditUser = () => {
                 <label className="zf-label">Blood Group</label>
                 <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} className="zf-select">
                   <option value="">Select Blood Group</option>
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
+                  <option value="1">A+</option>
+                  <option value="2">B+</option>
+                  <option value="3">O+</option>
+                  <option value="4">AB+</option>
+                  <option value="5">A-</option>
+                  <option value="6">B-</option>
+                  <option value="7">O-</option>
+                  <option value="8">AB-</option>
                 </select>
               </div>
 
@@ -201,24 +243,24 @@ const EditUser = () => {
 
               <div className="zf-input-group">
                 <label className="zf-label">Email</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} className="zf-input" required />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
                 <label className="zf-label">Mobile Number</label>
-                <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} className="zf-input" required />
+                <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group zf-full-width">
                 <label className="zf-label">Address</label>
-                <textarea name="address" value={formData.address} onChange={handleChange} className="zf-textarea" required></textarea>
+                <textarea name="address" value={formData.address} onChange={handleChange} className="zf-textarea" ></textarea>
               </div>
 
               <div className="zf-section-title">Emergency Contacts</div>
 
               <div className="zf-input-group">
                 <label className="zf-label">Emergency Number 1</label>
-                <input type="tel" name="emergentNo1" value={formData.emergentNo1} onChange={handleChange} className="zf-input" required />
+                <input type="tel" name="emergentNo1" value={formData.emergentNo1} onChange={handleChange} className="zf-input" />
               </div>
 
               <div className="zf-input-group">
@@ -236,7 +278,7 @@ const EditUser = () => {
                 <input type="tel" name="emergentNo4" value={formData.emergentNo4} onChange={handleChange} className="zf-input" />
               </div>
 
-              <div className="zf-section-title">Plan Details</div>
+              {/* <div className="zf-section-title">Plan Details</div>
 
               <div className="zf-input-group">
                 <label className="zf-label">Start Date</label>
@@ -246,7 +288,7 @@ const EditUser = () => {
               <div className="zf-input-group">
                 <label className="zf-label">Day</label>
                 <input type="text" name="day" value={formData.day} onChange={handleChange} className="zf-input" placeholder="e.g. Monday" />
-              </div>
+              </div> */}
 
               {/* <div className="zf-input-group">
                 <label className="zf-label">Select Plan</label>
@@ -258,7 +300,7 @@ const EditUser = () => {
                 </select>
               </div> */}
 
-              <div className="zf-input-group">
+              {/* <div className="zf-input-group">
                 <label className="zf-label">Status</label>
                 <select name="status" value={formData.status} onChange={handleChange} className="zf-select" required>
                   <option value="">Select Status</option>
@@ -266,7 +308,7 @@ const EditUser = () => {
                   <option value="Inactive">Inactive</option>
                   <option value="Pending">Pending</option>
                 </select>
-              </div>
+              </div> */}
 
               <button type="submit" className="zf-submit-btn">
                 Update Details

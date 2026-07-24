@@ -112,7 +112,7 @@ const Sidebar = () => {
                             style={{ display: activeMenu === 'manage-location' ? 'block' : 'none' }}
                         >
                             <li className={currentPath === '/tracking' ? 'active' : ''}><Link to="/tracking">Tracking</Link></li>
-                            <li className={currentPath === '/live-tracking' ? 'active' : ''}><Link to="/live-tracking">Live Tracking</Link></li>
+                            {/* <li className={currentPath === '/live-tracking' ? 'active' : ''}><Link to="/live-tracking">Live Tracking</Link></li> */}
                             {/* <li className={currentPath === '/trips' ? 'active' : ''}><Link to="/trips">Trips</Link></li>
                             <li className={currentPath === '/tracker-device' ? 'active' : ''}><Link to="/tracker-device">Tracker Device</Link></li> */}
                         </ul>
@@ -157,18 +157,13 @@ const Sidebar = () => {
                     </li>
 
 
-
-                    <li className={activeMenu === 'livelocation' ? 'active' : ''}>
-                        <Link to="/live-location/" aria-expanded="false">
-                            <i className="fa fa-location-arrow menu-icon"></i><span className="nav-text">Live Location Sharing</span>
-                        </Link>
-                    </li>
-
                     <li className={activeMenu === 'risequery' ? 'active' : ''}>
                         <Link to="/rise-query" aria-expanded="false">
                             <i className="fa fa-question-circle menu-icon"></i><span className="nav-text">Rise Query</span>
                         </Link>
                     </li>
+
+
 
 
                     {/* <li className={currentPath === '/settings' ? 'active' : ''}>
