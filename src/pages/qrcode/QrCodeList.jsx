@@ -3,7 +3,6 @@ import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import api from '../../services/api';
-
 // Premium Custom Styles for the DataTable (Matched with Template)
 const customStyles = {
     header: {
@@ -62,7 +61,13 @@ const QrCodeList = () => {
     const [keyword, setKeyword] = useState('');
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [generatedIds, setGeneratedIds] = useState(new Set());
     const navigate = useNavigate();
+
+    const handleGenerate = (row) => {
+        setGeneratedIds(prev => new Set(prev).add(row.id));
+        window.open(`/ziman/qrcode-view/${row.code}`, '_blank');
+    };
 
     const filteredQrCodes = qrCodes.filter(item => {
         if (!keyword) return true;
@@ -154,6 +159,7 @@ const QrCodeList = () => {
         //         );
         //     },
         // },
+
         {
             name: 'Code',
             selector: row => row.code,
@@ -174,9 +180,50 @@ const QrCodeList = () => {
             minWidth: '180px',
         },
         {
+            name: 'Generate QR',
+            cell: row => (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    {!generatedIds.has(row.id) ? (
+                        <button
+                            onClick={() => handleGenerate(row)}
+                            style={{
+                                padding: '6px 12px',
+                                border: 'none',
+                                borderRadius: '6px',
+                                backgroundColor: '#3498db',
+                                color: 'white',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                fontSize: '12px',
+                                transition: 'background 0.3s'
+                            }}
+                            title="Generate QR"
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#2980b9'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#3498db'}
+                        >
+                            Generate QR
+                        </button>
+                    ) : (
+                        <span style={{ fontSize: '12px', color: '#7f8c8d', fontStyle: 'italic' }}>Generated</span>
+                    )}
+                </div>
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: '120px',
+        },
+        {
+            name: 'is Used',
+            selector: row => row.user_id ? 'Used' : 'Not Used',
+            sortable: true,
+            minWidth: '100px',
+        },
+        {
             name: 'Action',
             cell: row => (
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+
                     {/* Status Toggle Icon */}
                     <button
                         onClick={() => handleToggleStatus(row.id, row.missing_status === '2' ? '0' : '1')}
