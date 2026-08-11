@@ -37,6 +37,7 @@ import ScanAlerts from './pages/qrcode/ScanAlerts';
 import LiveLocationSharing from './pages/locationsharing/livelocationsharing';
 import RiseQueryList from './pages/risequery/RiseQueryList';
 import QrCodeView from './pages/qrcode/QrCodeView';
+import AdminQrCodeView from './pages/qrcode/AdminQrCodeView';
 
 function App() {
   return (
@@ -74,6 +75,7 @@ function App() {
         {/* QR Code Routes */}
         <Route path="/qrcode-list" element={<Layout showFooter={false}><QrCodeList /></Layout>} />
         <Route path="/qrcode-view/:code" element={<QrCodeView />} />
+        <Route path="/admin-qrcode-view/:code" element={<AdminQrCodeView />} />
         <Route path="/add-qrcode" element={<Layout showFooter={false}><AddQrCode /></Layout>} />
         <Route path="/missing-qrlist" element={<Layout showFooter={false}><MissingQRList /></Layout>} />
         <Route path="/missing-qr-detail/:id" element={<Layout showFooter={false}><MissingQRListDetails /></Layout>} />

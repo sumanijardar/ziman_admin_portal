@@ -66,7 +66,7 @@ const QrCodeList = () => {
 
     const handleGenerate = (row) => {
         setGeneratedIds(prev => new Set(prev).add(row.id));
-        window.open(`/ziman/qrcode-view/${row.code}`, '_blank');
+        window.open(`/ziman/admin-qrcode-view/${row.code}`, '_blank');
     };
 
     const filteredQrCodes = qrCodes.filter(item => {
@@ -197,11 +197,11 @@ const QrCodeList = () => {
                                 fontSize: '12px',
                                 transition: 'background 0.3s'
                             }}
-                            title="Generate QR"
+                            title="View QR"
                             onMouseOver={(e) => e.target.style.backgroundColor = '#2980b9'}
                             onMouseOut={(e) => e.target.style.backgroundColor = '#3498db'}
                         >
-                            Generate QR
+                            View QR
                         </button>
                     ) : (
                         <span style={{ fontSize: '12px', color: '#7f8c8d', fontStyle: 'italic' }}>Generated</span>
